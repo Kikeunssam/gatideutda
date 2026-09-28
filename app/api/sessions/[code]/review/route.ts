@@ -40,34 +40,50 @@ export const POST = endpoint(async (_req, code) => {
       "감상평을 준비하고 있어요. 30초 후 다시 시도해주세요.",
       429,
     );
-  const model = process.env.GEMINI_MODEL || "gemini-3.5-flash-lite";
-  let res: Response;
-  try {
-    res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-goog-api-key": process.env.GEMINI_API_KEY,
+  const model = process.env.GEMINI_MODEL || "gemini-flash-latest";
+  let res: Response | undefined;
+  let connectionError: unknown;
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-goog-api-key": process.env.GEMINI_API_KEY,
+          },
+          body: JSON.stringify({
+            systemInstruction: { parts: [{ text: REVIEW_INSTRUCTIONS }] },
+            contents: [
+              { role: "user", parts: [{ text: JSON.stringify(input) }] },
+            ],
+            generationConfig: {
+              temperature: 0.4,
+              maxOutputTokens: 640,
+              // A classroom summary does not need a reasoning pass. Skipping it
+              // avoids long waits on the free tier.
+              thinkingConfig: { thinkingBudget: 0 },
+            },
+          }),
+          signal: AbortSignal.timeout(22000),
         },
-        body: JSON.stringify({
-          systemInstruction: { parts: [{ text: REVIEW_INSTRUCTIONS }] },
-          contents: [
-            { role: "user", parts: [{ text: JSON.stringify(input) }] },
-          ],
-          generationConfig: { temperature: 0.4, maxOutputTokens: 2048 },
-        }),
-        signal: AbortSignal.timeout(45000),
-      },
-    );
-  } catch (error) {
+      );
+      if (res.ok || res.status !== 503 || attempt === 1) break;
+    } catch (error) {
+      connectionError = error;
+      if (attempt === 1) break;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 800));
+  }
+  if (!res) {
+    const error = connectionError;
     if (
       error instanceof Error &&
       ["TimeoutError", "AbortError"].includes(error.name)
     ) {
       throw new AppError(
-        "Gemini 응답이 45초 안에 도착하지 않았어요. 잠시 후 다시 시도해주세요.",
+        "Gemini 응답이 제시간에 도착하지 않았어요. 잠시 후 다시 시도해주세요.",
         504,
       );
     }
