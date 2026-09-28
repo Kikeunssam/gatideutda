@@ -41,30 +41,71 @@ export const POST = endpoint(async (_req, code) => {
       429,
     );
   const model = process.env.GEMINI_MODEL || "gemini-3.5-flash-lite";
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(process.env.GEMINI_API_KEY)}`,
-    {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      systemInstruction: { parts: [{ text: REVIEW_INSTRUCTIONS }] },
-      contents: [{ role: "user", parts: [{ text: JSON.stringify(input) }] }],
-      generationConfig: { temperature: 0.4, maxOutputTokens: 800 },
-    }),
-    signal: AbortSignal.timeout(45000),
-    },
-  );
-  if (!res.ok)
+  let res: Response;
+  try {
+    res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-goog-api-key": process.env.GEMINI_API_KEY,
+        },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: REVIEW_INSTRUCTIONS }] },
+          contents: [
+            { role: "user", parts: [{ text: JSON.stringify(input) }] },
+          ],
+          generationConfig: { temperature: 0.4, maxOutputTokens: 2048 },
+        }),
+        signal: AbortSignal.timeout(45000),
+      },
+    );
+  } catch (error) {
+    if (
+      error instanceof Error &&
+      ["TimeoutError", "AbortError"].includes(error.name)
+    ) {
+      throw new AppError(
+        "Gemini 응답이 45초 안에 도착하지 않았어요. 잠시 후 다시 시도해주세요.",
+        504,
+      );
+    }
     throw new AppError(
-      "감상평을 만들지 못했습니다. Gemini API 키와 무료 한도를 확인해주세요.",
+      "Gemini 서버에 연결하지 못했어요. 잠시 후 다시 시도해주세요.",
       502,
     );
+  }
+  if (!res.ok) {
+    // Only log status and model; never keys, student input, or raw API errors.
+    console.error("Review generation failed", { status: res.status, model });
+    if (res.status === 429)
+      throw new AppError(
+        "Gemini 사용 한도를 초과했어요. 잠시 후 다시 시도하거나 Google AI Studio에서 사용 한도를 확인해주세요.",
+        429,
+      );
+    if ([400, 401, 403].includes(res.status))
+      throw new AppError(
+        "Gemini API 키 또는 접근 설정을 확인해주세요. 배포 서버의 Gemini 비밀키 설정 확인이 필요합니다.",
+        502,
+      );
+    if (res.status === 404)
+      throw new AppError(
+        "설정된 Gemini 모델을 사용할 수 없어요. 배포 서버의 GEMINI_MODEL 설정을 확인해주세요.",
+        502,
+      );
+    throw new AppError(
+      "Gemini 서버가 일시적으로 응답하지 못했어요. 잠시 후 다시 시도해주세요.",
+      502,
+    );
+  }
   const result = (await res.json()) as {
-    candidates?: { content?: { parts?: { text?: string }[] } }[];
+    candidates?: {
+      content?: { parts?: { text?: string; thought?: boolean }[] };
+    }[];
   };
   const content = result.candidates?.[0]?.content?.parts
+    ?.filter((part) => !part.thought)
     ?.map((part) => part.text ?? "")
     .join("\n")
     .trim();

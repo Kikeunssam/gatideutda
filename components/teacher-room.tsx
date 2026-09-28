@@ -12,6 +12,8 @@ import { Dashboard, Status, STATUS_LABEL } from "@/lib/types";
 export function TeacherRoom({ code }: { code: string }) {
   const [data, setData] = useState<Dashboard | null>(null),
     [error, setError] = useState(""),
+    [connectionError, setConnectionError] = useState(""),
+    [reviewError, setReviewError] = useState(""),
     [notice, setNotice] = useState(""),
     [busy, setBusy] = useState(""),
     [draft, setDraft] = useState(""),
@@ -38,12 +40,12 @@ export function TeacherRoom({ code }: { code: string }) {
       try {
         await refresh();
         if (active) {
-          setError("");
+          setConnectionError("");
           setJoinUrl(url);
         }
       } catch (e) {
         if (active) {
-          setError(messageOf(e));
+          setConnectionError(messageOf(e));
           setBlocked(true);
         }
       } finally {
@@ -60,10 +62,12 @@ export function TeacherRoom({ code }: { code: string }) {
     setBusy(name);
     setError("");
     setNotice("");
+    if (name === "generate" || name === "save") setReviewError("");
     try {
       await fn();
     } catch (e) {
       setError(messageOf(e));
+      if (name === "generate" || name === "save") setReviewError(messageOf(e));
     } finally {
       setBusy("");
     }
@@ -93,9 +97,9 @@ export function TeacherRoom({ code }: { code: string }) {
     <>
       <Header teacher />
       <main className="dashboard">
-        {error && (
+        {(error || connectionError) && (
           <p className="error" role="alert">
-            {error}
+            {error || connectionError}
           </p>
         )}
         {notice && (
@@ -337,6 +341,11 @@ export function TeacherRoom({ code }: { code: string }) {
                       ? "✧ 다시 만들기"
                       : "✧ 우리 반 감상평 만들기"}
                 </button>
+                {reviewError && (
+                  <p className="error" role="alert">
+                    {reviewError}
+                  </p>
+                )}
                 <label className="review-label">
                   선생님이 다듬는 감상평
                   <textarea

@@ -107,6 +107,24 @@ assert.ok(
 await page.screenshot({ path: "output/qa/cloud-fullscreen.png" });
 await page.getByRole("button", { name: "전체화면 닫기 · Esc" }).click();
 await page.getByRole("dialog").waitFor({ state: "hidden" });
+const failReview = (route) =>
+  route.fulfill({
+    status: 429,
+    json: { error: "Gemini 사용 한도를 초과했어요." },
+  });
+await page.route("**/api/sessions/A7K3PM/review", failReview);
+await page.getByRole("button", { name: "✧ 다시 만들기", exact: true }).click();
+await page.locator(".review [role=alert]").waitFor();
+// Successful dashboard polling must not erase a failed generation message.
+await page.waitForResponse((response) => response.url().endsWith("/responses"));
+await page.waitForTimeout(100);
+assert.match(await page.locator(".review [role=alert]").innerText(), /한도/);
+await page.unroute("**/api/sessions/A7K3PM/review", failReview);
+await page.getByRole("button", { name: "✧ 다시 만들기", exact: true }).click();
+await page.locator(".review [role=alert]").waitFor({ state: "hidden" });
+await page.waitForFunction(
+  () => document.querySelector(".review textarea")?.value.length > 0,
+);
 await page
   .getByRole("button", { name: "감상구름 전체화면", exact: true })
   .click();
