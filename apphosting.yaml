@@ -19,5 +19,9 @@ env:
   - variable: GEMINI_MODEL
     value: gemini-3.5-flash-lite
 
-# NEXT_PUBLIC_APP_URL is deliberately unset: invitation links use the deployed browser origin.
+  - variable: NEXT_PUBLIC_APP_URL
+    value: https://gatideutda--gatideutda.asia-east1.hosted.app
+    availability: [BUILD, RUNTIME]
+
+# The public origin is explicit because App Hosting proxies requests to an internal host.
 # maxInstances limits scaling, but is not a billing cap.
