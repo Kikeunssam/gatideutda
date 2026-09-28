@@ -1,0 +1,12 @@
+{
+  "apphosting": [
+    {
+      "backendId": "gatideutda",
+      "rootDir": ".",
+      "ignore": [
+        "node_modules", ".git", ".next", ".env*", ".tools", ".npm-cache",
+        "output", "tmp", "*.tsbuildinfo", "firebase-debug.log", "firebase-debug.*.log"
+      ]
+    }
+  ]
+}

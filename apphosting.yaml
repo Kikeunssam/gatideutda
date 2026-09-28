@@ -1,0 +1,23 @@
+# Server-side secrets must be registered in the selected Firebase project before deployment.
+runConfig:
+  minInstances: 0
+  maxInstances: 2
+  concurrency: 80
+  cpu: 1
+  memoryMiB: 512
+
+env:
+  - variable: SUPABASE_URL
+    secret: gatideutda-supabase-url
+    availability: [RUNTIME]
+  - variable: SUPABASE_SERVICE_ROLE_KEY
+    secret: gatideutda-supabase-service-role-key
+    availability: [RUNTIME]
+  - variable: GEMINI_API_KEY
+    secret: gatideutda-gemini-api-key
+    availability: [RUNTIME]
+  - variable: GEMINI_MODEL
+    value: gemini-3.5-flash-lite
+    availability: [RUNTIME]
+# NEXT_PUBLIC_APP_URL is deliberately unset: invitation links use the deployed browser origin.
+# maxInstances limits scaling, but is not a billing cap.

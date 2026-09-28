@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="150" viewBox="0 0 360 150" role="img" aria-label="같이듣다, 함께 듣는 음악 감상실">
+ <defs>
+  <linearGradient id="blue" x2="0" y2="1"><stop stop-color="#83beff"/><stop offset="1" stop-color="#4b91eb"/></linearGradient>
+  <linearGradient id="coral" x2="0" y2="1"><stop stop-color="#ffaaa4"/><stop offset="1" stop-color="#f1777e"/></linearGradient>
+  <linearGradient id="mint" x2="0" y2="1"><stop stop-color="#89e4ce"/><stop offset="1" stop-color="#45bda4"/></linearGradient>
+  <linearGradient id="purple" x2="0" y2="1"><stop stop-color="#c4afff"/><stop offset="1" stop-color="#9477e5"/></linearGradient>
+  <filter id="shadow" x="-20%" y="-30%" width="140%" height="180%"><feDropShadow dx="0" dy="3" stdDeviation="2" flood-color="#b6a797" flood-opacity=".2"/></filter>
+ </defs>
+ <path d="M105 39C122 0 235 0 254 39" fill="none" stroke="#b8dbff" stroke-width="11" stroke-linecap="round"/>
+ <path d="M105 39C123 5 235 5 254 39" fill="none" stroke="#83baf2" stroke-width="5" stroke-linecap="round"/>
+ <rect x="96" y="28" width="15" height="23" rx="7" fill="#ffd978" transform="rotate(23 103 39)"/>
+ <rect x="248" y="28" width="15" height="23" rx="7" fill="#ffd978" transform="rotate(-23 255 39)"/>
+ <path d="m40 24 4 10 10 4-10 4-4 10-4-10-10-4 10-4zM317 38l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" fill="#f8ce66"/>
+ <g font-family="Arial, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="73" font-weight="900" stroke="#fffdfa" stroke-width="7" stroke-linejoin="round" paint-order="stroke fill" filter="url(#shadow)" text-anchor="middle">
+  <text x="72" y="110" fill="url(#blue)">같</text><text x="145" y="110" fill="url(#coral)">이</text><text x="218" y="110" fill="url(#mint)">듣</text><text x="291" y="110" fill="url(#purple)">다</text>
+ </g>
+ <g stroke-linecap="round" stroke-width="4"><path d="M29 84v12" stroke="#90d9e4"/><path d="M20 88v4" stroke="#b7a4ec"/><path d="M331 83v14" stroke="#eeb4ca"/><path d="M340 87v6" stroke="#efd087"/></g>
+ <text x="180" y="139" text-anchor="middle" font-family="Arial, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="14" font-weight="600" letter-spacing="1" fill="#738294">함께 듣는 음악 감상실</text>
+</svg>
