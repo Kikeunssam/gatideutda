@@ -73,7 +73,7 @@ export function Worksheet({ data }: { data: Dashboard }) {
         </section>
         <section className="sheet-cloud">
           <SectionTitle number="02">우리 반 감상구름</SectionTitle>
-          <Cloud words={data.frequencies} scale={0.75} />
+          <Cloud words={data.frequencies} scale={0.75} packed={false} />
         </section>
         <section>
           <SectionTitle number="03">우리 반에서 많이 나온 생각</SectionTitle>
