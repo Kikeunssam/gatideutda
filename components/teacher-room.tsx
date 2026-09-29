@@ -394,11 +394,6 @@ export function TeacherRoom({ code }: { code: string }) {
                 ))}
               </div>
             </details>
-            <ClassMusic
-              code={code}
-              disabled={!!busy || blocked || !data.frequencies.length}
-              dirty={dirty}
-            />
             <section className="pdf-banner">
               <div>
                 <h2>오늘의 감상을, 한 장의 기록으로</h2>
@@ -424,6 +419,11 @@ export function TeacherRoom({ code }: { code: string }) {
                 {busy === "pdf" ? "학습지 만드는 중…" : "↓ 감상 학습지 PDF"}
               </button>
             </section>
+            <ClassMusic
+              code={code}
+              disabled={!!busy || blocked || !data.frequencies.length}
+              dirty={dirty}
+            />
             <p className="quiet expiry">
               감상방 종료:{" "}
               {new Date(data.session.expires_at).toLocaleString("ko-KR")} · 이

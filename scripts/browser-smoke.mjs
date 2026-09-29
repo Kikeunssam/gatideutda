@@ -147,6 +147,10 @@ await page
   .getByLabel("선생님이 다듬는 감상평")
   .fill(review + " 서로의 생각을 나눠봅시다.");
 await page.getByRole("button", { name: "저장", exact: true }).click();
+assert.equal(await page.locator(".class-music").getAttribute("open"), null);
+await page
+  .getByText("선택 활동: 우리 반 감상으로 음악 만들기", { exact: true })
+  .click();
 await page.route("**/api/sessions/A7K3PM/music", (route) =>
   route.fulfill({
     status: 429,
