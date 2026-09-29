@@ -889,6 +889,56 @@ textarea {
   text-align: center;
   letter-spacing: -1px;
 }
+.cloud-word-label {
+  display: inline-block;
+  max-width: 100%;
+}
+@media screen and (prefers-reduced-motion: no-preference) {
+  :is(.cloud-card, .cloud-presentation[open]) .cloud-word {
+    animation: cloud-float 6s ease-in-out infinite;
+  }
+  :is(.cloud-card, .cloud-presentation[open]) .cloud-word:nth-child(3n + 1) {
+    animation-duration: 7.2s;
+    animation-delay: -2.4s;
+  }
+  :is(.cloud-card, .cloud-presentation[open]) .cloud-word:nth-child(3n + 2) {
+    animation-duration: 8.4s;
+    animation-delay: -5.1s;
+  }
+  :is(.cloud-card, .cloud-presentation[open]) .cloud-word-label {
+    transition:
+      transform 250ms ease,
+      text-shadow 250ms ease;
+  }
+}
+@keyframes cloud-float {
+  0%,
+  100% {
+    transform: translateY(3px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+@media screen and (hover: hover) and (pointer: fine) {
+  :is(.cloud-card, .cloud-presentation[open]) .cloud-word:hover {
+    animation-play-state: paused;
+    position: relative;
+    z-index: 1;
+  }
+  :is(.cloud-card, .cloud-presentation[open])
+    .cloud-word:hover
+    .cloud-word-label {
+    text-shadow: 0 5px 16px color-mix(in srgb, currentColor 30%, transparent);
+  }
+}
+@media screen and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  :is(.cloud-card, .cloud-presentation[open])
+    .cloud-word:hover
+    .cloud-word-label {
+    transform: scale(1.06);
+  }
+}
 .color-0 {
   color: #8dadd0;
 }

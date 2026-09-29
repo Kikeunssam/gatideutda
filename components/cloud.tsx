@@ -19,7 +19,7 @@ export function Cloud({
             }}
             title={`${x.count}번 나온 생각`}
           >
-            {x.word}
+            <span className="cloud-word-label">{x.word}</span>
           </span>
         ))
       ) : (
