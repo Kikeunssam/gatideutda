@@ -1363,6 +1363,7 @@ summary {
 
 /* User-provided illustrations, reused directly with responsive image optimization. */
 .class-music {
+  margin-bottom: 24px;
   margin-top: 24px;
   background: linear-gradient(120deg, #f2edff, #edf8f4);
 }
